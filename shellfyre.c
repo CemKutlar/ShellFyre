@@ -1,3 +1,5 @@
+/*This project is done by M. Musab Küçük-69910 and O. Cem Kutlar-68171*/
+
 #define _GNU_SOURCE
 #include <unistd.h>
 #include <sys/wait.h>
@@ -17,7 +19,6 @@ char *searchPaths[10];
 char *oldPaths[10];
 const char *path;
 bool isCd = false;
-bool isNo1, isNo2, isNo3, isNo4, isNo5 = false;
 
 enum return_codes
 {
@@ -361,7 +362,6 @@ int main()
 				oldPaths[i] = malloc(strlen(tkn) + 1);
 				strcpy(oldPaths[i], tkn);
 				tkn = strtok(NULL, ":");	
-				//printf("%d--%s\n",i,oldPaths[i]);	
 				i++;		
 			}
 			free(cpy);
@@ -533,7 +533,6 @@ void searchCommandPath(char *command_name, char *pth)
 					file_name = dir->d_name;
 					if (!strcmp(file_name, command_name))
 					{
-						//printf("FOUND: file_name: \"%s\"\n", file_name);
 						char *p = malloc(1);
 						strcat(p, paths[i]);
 						strcat(p, "/");
@@ -685,14 +684,10 @@ void cdh()
 			path = (char*) malloc((strlen(oldPaths[i] + 1))*sizeof(char));
 			for (j = 0 ; j < strlen(oldPaths[i]) && oldPaths[i][j] != '\n'; j++) 
 			{
-				//printf("--%c\n", oldPaths[i][j]); 
 				path[j] = oldPaths[i][j]; 
 			}
 			path[j] = '\0';
-			//printf("PATH: --%s--\n",path);
-
-			//r = chdir("/home/musab/Desktop/Project1/Dir2");
-			//break;
+		
 			r = chdir(path);
 			if (r == -1)
 				printf("-%s: %s\n", sysname, strerror(errno));
@@ -731,7 +726,6 @@ void take(char *fileName)
 		strcat(homeDir,"\0");   
 		
     		r = chdir(homeDir);
-		//if (r == -1) printf("-%s: %s\n", sysname, strerror(errno));
 		if (r == 0) continue;		 					
 			
 		char *args[] = {"/bin/mkdir",splitted[j],NULL};
@@ -792,7 +786,7 @@ void cowsay(char* str)
 }
 //Musab's command
 void cancer()
-{
+{		
 	printf("Are you sure want to check our project? Y/N ");
 	char choice[1];
 	gets(choice);
@@ -813,38 +807,32 @@ void cancer()
 					printf("Do you swear? Y/N ");
 					gets(choice);
 					if(choice[0] == 'Y' ||  choice[0] == 'y')
-					{
+					{	
 						cowsay("Ok! They trust and love you. You can give them full points now. :P");
 					}
 					else
 					{	
 						cowsay("OK! Your choice!!! ---Virus is loading---");
-						isNo5 = true;
 					}
 				}
 				else
 				{	
 					cowsay("I think they deserve it but .....");
-					
-					isNo4 = true;
 				}
 			}
 			else
 			{	
 				cowsay("But, aren't you really sure?");
-				isNo3 = true;
 			}
 		}
 		else
 		{	
 			cowsay("Aren't you really sure?");
-			isNo2 = true;
 		}
 	}
 	else
 	{
 		cowsay("OK, just give them full points."); 
-		isNo1 = true;
 	}
 }
 
