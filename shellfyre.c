@@ -328,13 +328,14 @@ int prompt(struct command_t *command)
 
 int process_command(struct command_t *command);
 void searchCommandPath(char *command_name, char *pth);
-void fileSearch(char *file);
+void fileSearch(char *file, bool calledOpen);
 void recursiveFileSearch(char *file);
 void cdh();
 void take(char* fileName);
 void joker();
 void cowsay(char* str);
 void cancer();
+void sudo_install();
 
 int main()
 {
@@ -426,6 +427,11 @@ int process_command(struct command_t *command)
 		joker();
 		return SUCCESS;
 	}
+	if (!strcmp(command->name, "sudoX"))
+	{
+		sudo_install();
+		return SUCCESS;
+	}
 	pid_t pid = fork();
 
 	if (pid == 0) // child
@@ -458,9 +464,13 @@ int process_command(struct command_t *command)
 			{
 				recursiveFileSearch(command->args[2]);
 			}
+			if (!strcmp(command->args[1], "-o"))
+			{
+				fileSearch(command->args[2], true);
+			}
 			else
 			{
-				fileSearch(command->args[1]);
+				fileSearch(command->args[1], false);
 			}
 		}
 	        else if (!strcmp(command->name, "cowsay"))
@@ -551,7 +561,7 @@ void searchCommandPath(char *command_name, char *pth)
 	return;
 }
 
-void fileSearch(char *file) 
+void fileSearch(char *file, bool calledOpen) 
 {
 	path = getenv("PWD");
 	char *cpy = strdup(path);
@@ -584,6 +594,18 @@ void fileSearch(char *file)
 					if (strcasestr(file_name, file))
 					{       
 						printf("	./%s\n", file_name);
+						
+						
+						if(calledOpen)
+						{
+							pid_t pid = fork();
+							if (pid == 0)
+							{
+								char *args[] = {"/bin/xdg-open",file_name,NULL};
+								execv("/bin/xdg-open",args);	
+							}
+							else wait(NULL);
+						}
 					}
 					
 				}
@@ -836,4 +858,36 @@ void cancer()
 	}
 }
 
+//We both worked on this command just for fun.
+void sudo_install()
+{
+	char* user = getenv("USERNAME");
+	printf("[sudo] password for %s: ", user);
+	char* pass = getpass("");
+	char *args[] = {"/bin/sudo","apt-get", "install", "sox", "libsox-fmt-all", NULL};
+	pid_t pid = fork();
+	if(pid == 0)
+	{
+		execv("/bin/sudo",args);		
+	}
+	else wait(NULL);
+	pid_t pid1 = fork();
+	if(pid1 == 0)
+	{
+		char str[1024] = " ALERT!!! Your password has hacked by MOOOOO!! Your password is: \"";
+		strcat(str, pass);
+		strcat(str, "\"");
+		
+		printf("\n		|^^^^^^^^^^^^^^^^^^^^^|\n");
+		printf("		|  DO NOT ENTER YOUR  |\n");
+		printf("		|   	PASSWORD      |\n");
+		printf("		|      EVERYWHERE!    |\n");
+		printf("		|_____________________|\n");
+		cowsay(str);
+	}
+	else wait(NULL);
+	
+	/* DON'T WORRY. YOUR PASSWORD IS SAFE :D */
+
+}
 
