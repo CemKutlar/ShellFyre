@@ -17,6 +17,7 @@ char *searchPaths[10];
 char *oldPaths[10];
 const char *path;
 bool isCd = false;
+bool isNo1, isNo2, isNo3, isNo4, isNo5 = false;
 
 enum return_codes
 {
@@ -330,6 +331,9 @@ void fileSearch(char *file);
 void recursiveFileSearch(char *file);
 void cdh();
 void take(char* fileName);
+void joker();
+void cowsay(char* str);
+void cancer();
 
 int main()
 {
@@ -417,6 +421,11 @@ int process_command(struct command_t *command)
 		take(fileName);
 		return SUCCESS;
 	}
+	if (!strcmp(command->name, "joker"))
+	{
+		joker();
+		return SUCCESS;
+	}
 	pid_t pid = fork();
 
 	if (pid == 0) // child
@@ -454,7 +463,23 @@ int process_command(struct command_t *command)
 				fileSearch(command->args[1]);
 			}
 		}
-		
+	        else if (!strcmp(command->name, "cowsay"))
+		{
+			char *string; 
+			string = (char *) malloc(1024);
+			int i = 1;
+			while(command->args[i] !=NULL)
+			{
+				strcat(string, " ");
+				strcat(string, command->args[i]);
+				i++;
+			}
+			cowsay(string);
+		}
+		else if (!strcmp(command->name, "cancer"))
+		{
+			cancer();
+		}
 		else
 		{
 			printf("-%s: %s: command not found\n", sysname, command->name);
@@ -727,28 +752,100 @@ void take(char *fileName)
 	free(fileName);
 }
 
+void joker() 
+{
+	char *args[] = {"/bin/crontab","joker.txt",NULL};				
+	
+	pid_t pid = fork();	
+		
+	if(pid == 0)
+	{
+		execv("/bin/crontab",args);				
+	}
+	else
+	{
+		wait(NULL);	
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	}	
+}
+//Cem's command
+void cowsay(char* str)
+{	
+	int i;
+	printf("	  ");
+	for(i = 0; i < strlen(str); i++)
+	printf("_");	
+	char *args[] = {"/bin/play","-q", "moo.mp3",NULL};		
+	
+	printf("\n	< %s >", str);
+	printf("\n	  ");
+	
+	for(i = 0; i < strlen(str); i++)
+	printf("-");
+	
+	printf("\n		\\   ^__^\n");
+	printf("		 \\  (oo)\\_______\n");
+	printf("		    (__)\\       )\\/\\ \n");
+	printf("		        ||----w |\n");
+	printf("		        ||     ||\n");
+	execv("/bin/play",args);
+}
+//Musab's command
+void cancer()
+{
+	printf("Are you sure want to check our project? Y/N ");
+	char choice[1];
+	gets(choice);
+	if(choice[0] == 'Y' ||  choice[0] == 'y')
+	{
+		printf("Are you really sure? Y/N ");
+		gets(choice);
+		if(choice[0] == 'Y' ||  choice[0] == 'y')
+		{
+			printf("But are you really sure? Y/N ");
+			gets(choice);
+			if(choice[0] == 'Y' ||  choice[0] == 'y')
+			{
+				printf("Will you give us full points? Y/N ");
+				gets(choice);
+				if(choice[0] == 'Y' ||  choice[0] == 'y')
+				{
+					printf("Do you swear? Y/N ");
+					gets(choice);
+					if(choice[0] == 'Y' ||  choice[0] == 'y')
+					{
+						cowsay("Ok! They trust and love you. You can give them full points now. :P");
+					}
+					else
+					{	
+						cowsay("OK! Your choice!!! ---Virus is loading---");
+						isNo5 = true;
+					}
+				}
+				else
+				{	
+					cowsay("I think they deserve it but .....");
+					
+					isNo4 = true;
+				}
+			}
+			else
+			{	
+				cowsay("But, aren't you really sure?");
+				isNo3 = true;
+			}
+		}
+		else
+		{	
+			cowsay("Aren't you really sure?");
+			isNo2 = true;
+		}
+	}
+	else
+	{
+		cowsay("OK, just give them full points."); 
+		isNo1 = true;
+	}
+}
 
 
